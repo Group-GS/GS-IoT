@@ -215,6 +215,12 @@ https://api.openweathermap.org/data/2.5/weather
 
 ---
 
+## Youtube
+
+Link: https://www.youtube.com/watch?v=VZ1IeIuFmQQ
+
+---
+
 ## 🔁 MQTT Utilizado
 
 ### Entrada:
