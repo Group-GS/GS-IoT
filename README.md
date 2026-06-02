@@ -237,33 +237,10 @@ Link: https://www.youtube.com/watch?v=VZ1IeIuFmQQ
 
 ---
 
-## 📱 Próximos Passos
-
-* 📲 Integração com aplicativo mobile
-* ☁️ Deploy em cloud (Azure/AWS)
-* 🔐 Segurança (autenticação MQTT)
-* 📊 Dashboard avançado
-* 🤖 IA para previsão climática
-
----
-
-## ✅ Conclusão
-
-Este projeto implementa um sistema IoT completo, incluindo:
-
-✔ Coleta de dados
-✔ Processamento em tempo real
-✔ Armazenamento
-✔ Visualização
-✔ Análise inteligente
-✔ Integração externa
-
-Simulando um cenário real de **monitoramento ambiental para agricultura e cidades inteligentes**.
-
----
-
 ## 👨‍💻 Autores
 
 Aluno: Lucas Rafael Solimene / RM: 565194
+
 Aluno: Samyr Couto Oliveira / RM: 565562
+
 Aluno: Henrique Teixeira Cesar / RM: 563088
