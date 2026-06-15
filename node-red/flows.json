@@ -1,8 +1,1064 @@
 [
     {
-        "id": "f60443c0fc3356a0",
+        "id": "3c3a538362403657",
+        "type": "tab",
+        "label": "Monitoramento Ambiental",
+        "disabled": false
+    },
+    {
+        "id": "abab0df1dfc359ad",
+        "type": "mqtt in",
+        "z": "3c3a538362403657",
+        "name": "",
+        "topic": "iot/temperatura",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "542122ca7238dba3",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 120,
+        "y": 200,
+        "wires": [
+            [
+                "f87e9d29fdb09742",
+                "cf9af722aafe2792",
+                "fa946028fee737ab",
+                "b9db70cc0cb2fa96",
+                "07d79ee61fabf422",
+                "ce057add7155cb88",
+                "dec5c33c093d1e4f"
+            ]
+        ]
+    },
+    {
+        "id": "f87e9d29fdb09742",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "Temperatura",
+        "func": "const temp = Number(msg.payload);\n\nif (isNaN(temp) || temp < -10 || temp > 60) {\n    node.warn(\"Temperatura fora do esperado\");\n    return null;\n}\n\nlet descricao = \"\";\n\nif (temp >= 35) {\n    descricao = \"Calor extremo\";\n}\nelse if (temp >= 30) {\n    descricao = \"Temperatura alta\";\n}\nelse if (temp >= 18) {\n    descricao = \"Normal\";\n}\nelse {\n    descricao = \"Frio\";\n}\n\nmsg.payload = descricao;\n\nlet led = {};\n\nif (temp >= 35) {\n    led.payload = \"ON\";\n} else {\n    led.payload = \"OFF\";\n}\n\nled.topic = \"iot/alerta_temp\";\n\nreturn [msg, led];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 100,
+        "wires": [
+            [
+                "ac591dcd171002d0"
+            ],
+            [
+                "d528555f2084d6a4"
+            ]
+        ]
+    },
+    {
+        "id": "fa946028fee737ab",
+        "type": "ui_gauge",
+        "z": "3c3a538362403657",
+        "name": "",
+        "group": "de3f2f3b3c0b1b5a",
+        "width": "6",
+        "height": "4",
+        "gtype": "gage",
+        "title": "Temperatura",
+        "label": "°C",
+        "format": "{{value}} °C",
+        "min": "-10",
+        "max": "60",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 350,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "cf9af722aafe2792",
+        "type": "ui_chart",
+        "z": "3c3a538362403657",
+        "name": "",
+        "group": "6b039e9e88e7bd3d",
+        "width": "",
+        "height": "",
+        "label": "Temperatura",
+        "chartType": "line",
+        "xformat": "HH:mm:ss",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": "",
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 350,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ac591dcd171002d0",
         "type": "ui_text",
-        "z": "flow_iot",
+        "z": "3c3a538362403657",
+        "group": "de3f2f3b3c0b1b5a",
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "Status Temp: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 550,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "9a511fb1ac6e3f75",
+        "type": "mqtt in",
+        "z": "3c3a538362403657",
+        "name": "",
+        "topic": "iot/umidade",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "542122ca7238dba3",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 130,
+        "y": 460,
+        "wires": [
+            [
+                "523b53e101d4be1a",
+                "3bf9d3b51e05b52a",
+                "49f11684b9301e5f",
+                "b9db70cc0cb2fa96",
+                "08ac34928228d06f",
+                "46db1112b40ad491",
+                "485604cf74307d85"
+            ]
+        ]
+    },
+    {
+        "id": "523b53e101d4be1a",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "Umidade",
+        "func": "const hum = Number(msg.payload);\n\nif (isNaN(hum) || hum < 0 || hum > 100) {\n    node.warn(\"Umidade fora do esperado\");\n    return null;\n}\n\nlet descricao = \"\";\n\nif (hum >= 80) { \n    descricao = \"Umidade alta\";\n}\nelse if (hum >= 40) {\n    descricao = \"Normal\";\n}\nelse {\n    descricao = \"Ar seco\";\n}\n\nmsg.payload = descricao;\n\nlet led = {};\n\nif (hum < 40) {\n    led.payload = \"ON\";\n} else {\n    led.payload = \"OFF\";\n}\n\nled.topic = \"iot/alerta_umidade\";\n\nreturn [msg, led];",
+        "outputs": 2,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 460,
+        "wires": [
+            [
+                "0d787258dd3546a3"
+            ],
+            [
+                "04bd798ccdf3a1e1"
+            ]
+        ]
+    },
+    {
+        "id": "49f11684b9301e5f",
+        "type": "ui_gauge",
+        "z": "3c3a538362403657",
+        "name": "",
+        "group": "56fad255a19a1384",
+        "width": "",
+        "height": "",
+        "gtype": "gage",
+        "title": "Umidade",
+        "label": "%",
+        "format": "{{value}} %",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 340,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "3bf9d3b51e05b52a",
+        "type": "ui_chart",
+        "z": "3c3a538362403657",
+        "name": "",
+        "group": "6b039e9e88e7bd3d",
+        "width": "",
+        "height": "",
+        "label": "Umidade",
+        "chartType": "line",
+        "xformat": "HH:mm:ss",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": "",
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 340,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0d787258dd3546a3",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "56fad255a19a1384",
+        "width": "",
+        "height": "",
+        "name": "",
+        "label": "Status Umidade: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": "",
+        "color": "#000000",
+        "x": 570,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "6fc125cf4988a9ce",
+        "type": "mqtt in",
+        "z": "3c3a538362403657",
+        "name": "",
+        "topic": "iot/pressao",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "542122ca7238dba3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 880,
+        "wires": [
+            [
+                "17611eedb7c6f422",
+                "c8bdd4ee38366380",
+                "d31989e4973e52ac",
+                "b9db70cc0cb2fa96",
+                "dbee237f9593066a",
+                "64f0cd5ddd529c59",
+                "094d0a689b0fb404"
+            ]
+        ]
+    },
+    {
+        "id": "17611eedb7c6f422",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "Pressão",
+        "func": "const pressao = Number(msg.payload);\n\nif (isNaN(pressao) || pressao < 800 || pressao > 1200) {\n    node.warn(\"Pressão fora do esperado\");\n    return null;\n}\n\nlet descricao = \"\";\n\nif (pressao >= 1020) {\n    descricao = \"Pressão alta\";\n}\nelse if (pressao >= 1000) {\n    descricao = \"Normal\";\n}\nelse {\n    descricao = \"Pressão baixa\";\n}\n\nmsg.payload = descricao;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 820,
+        "wires": [
+            [
+                "a9681f1126821cf7"
+            ]
+        ]
+    },
+    {
+        "id": "c8bdd4ee38366380",
+        "type": "ui_gauge",
+        "z": "3c3a538362403657",
+        "name": "",
+        "group": "378afae7d4baa156",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Pressão",
+        "label": "hPa",
+        "format": "{{value}}",
+        "min": "800",
+        "max": "1200",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 340,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "d31989e4973e52ac",
+        "type": "ui_chart",
+        "z": "3c3a538362403657",
+        "name": "",
+        "group": "6b039e9e88e7bd3d",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Pressão",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 340,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a9681f1126821cf7",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "378afae7d4baa156",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Status Pressão: ",
+        "format": "{{msg.payload}}",
+        "layout": "row-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 560,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "bd5d624277960ed9",
+        "type": "mqtt out",
+        "z": "3c3a538362403657",
+        "name": "",
+        "topic": "iot/led",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "542122ca7238dba3",
+        "x": 830,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "d528555f2084d6a4",
+        "type": "ui_switch",
+        "z": "3c3a538362403657",
+        "name": "",
+        "label": "Alerta de Calor",
+        "tooltip": "",
+        "group": "6ef45ce1a4a3fa4a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "iot/alerta_temp",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "ON",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "OFF",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 560,
+        "y": 140,
+        "wires": [
+            [
+                "bd5d624277960ed9"
+            ]
+        ]
+    },
+    {
+        "id": "04bd798ccdf3a1e1",
+        "type": "ui_switch",
+        "z": "3c3a538362403657",
+        "name": "",
+        "label": "Alerta de Ar Seco",
+        "tooltip": "",
+        "group": "6ef45ce1a4a3fa4a",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "iot/alerta_umidade",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "ON",
+        "onvalueType": "str",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "OFF",
+        "offvalueType": "str",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 570,
+        "y": 500,
+        "wires": [
+            [
+                "bd5d624277960ed9"
+            ]
+        ]
+    },
+    {
+        "id": "b9db70cc0cb2fa96",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "Acumula",
+        "func": "// Recupera o estado atual ou inicia com valores padrão\nlet dados = context.get(\"dados\") || {\n    temperatura: null,\n    umidade: null,\n    pressao: null\n};\n\n// Atualiza o dado específico baseado no tópico MQTT\nif (msg.topic === \"iot/temperatura\") dados.temperatura = Number(msg.payload);\nif (msg.topic === \"iot/umidade\")     dados.umidade = Number(msg.payload);\nif (msg.topic === \"iot/pressao\")     dados.pressao = Number(msg.payload);\n\n// Salva o estado atualizado no contexto\ncontext.set(\"dados\", dados);\n\n// Só envia se todos os três campos já tiverem recebido pelo menos um valor\nif (\n    dados.temperatura !== null &&\n    dados.umidade !== null &&\n    dados.pressao !== null\n) {\n    // Clona o objeto para evitar problemas de concorrência\n    msg.payload = { ...dados }; \n    msg.payload.timestamp = new Date();\n    \n    return msg;\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 940,
+        "wires": [
+            [
+                "30ebb3d8e27ffec2"
+            ]
+        ]
+    },
+    {
+        "id": "30ebb3d8e27ffec2",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "MySql",
+        "func": "let d = msg.payload;\n\n\nmsg.topic = `INSERT INTO sensores (temperatura, umidade, pressao, data_hora) VALUES (${d.temperatura}, ${d.umidade}, ${d.pressao}, NOW());`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 940,
+        "wires": [
+            [
+                "16cb7c15a4546a4a"
+            ]
+        ]
+    },
+    {
+        "id": "07d79ee61fabf422",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "tendencia_temp",
+        "func": "let historico = context.get(\"hist_temp\") || [];\n\nlet temp = Number(msg.payload);\n\n// salva valor\nhistorico.push(temp);\n\n// mantém últimos 5\nif (historico.length > 5) {\n    historico.shift();\n}\n\ncontext.set(\"hist_temp\", historico);\n\n// análise\nif (historico.length >= 2) {\n    let primeiro = historico[0];\n    let ultimo = historico[historico.length - 1];\n\n    if (ultimo > primeiro) {\n        msg.payload = \"📈 Temperatura subindo\";\n    } else if (ultimo < primeiro) {\n        msg.payload = \"📉 Temperatura caindo\";\n    } else {\n        msg.payload = \"➖ Estável\";\n    }\n\n    return msg;\n}\n\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 220,
+        "wires": [
+            [
+                "991d77ab39a16533"
+            ]
+        ]
+    },
+    {
+        "id": "991d77ab39a16533",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "87fb7dcc2a7926ba",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ce057add7155cb88",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "analise_temp",
+        "func": "let temp = Number(msg.payload);\n\nif (temp >= 35) {\n    msg.payload = \"🔥 Calor extremo\";\n}\nelse if (temp >= 30) {\n    msg.payload = \"☀️ Quente\";\n}\nelse if (temp >= 18) {\n    msg.payload = \"🌤️ Normal\";\n}\nelse {\n    msg.payload = \"❄️ Frio\";\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 280,
+        "wires": [
+            [
+                "d75c32ca23cf5af6"
+            ]
+        ]
+    },
+    {
+        "id": "d75c32ca23cf5af6",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "a2c9970c4f5f6ca6",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "dec5c33c093d1e4f",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "alerta_temp",
+        "func": "let temp = Number(msg.payload);\n\nlet alerta = null;\n\nif (temp >= 35) {\n    alerta = {\n        nivel: \"CRÍTICO\",\n        mensagem: \"Temperatura extremamente alta\"\n    };\n}\nelse if (temp >= 30) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Temperatura elevada\"\n    };\n}\n\nif (!alerta) return null;\n\nlet msgUI = {\n    payload: `🚨 ${alerta.nivel}: ${alerta.mensagem}`\n};\n\n\nreturn msgUI;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 340,
+        "wires": [
+            [
+                "649fc4db5ea4d2c8"
+            ]
+        ]
+    },
+    {
+        "id": "649fc4db5ea4d2c8",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "31429977ee64abee",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "08ac34928228d06f",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "tendencia_umidade",
+        "func": "let historico = context.get(\"hist_umidade\") || [];\n\nlet hum = Number(msg.payload);\n\n// adiciona valor\nhistorico.push(hum);\n\n// mantém últimos 5\nif (historico.length > 5) {\n    historico.shift();\n}\n\ncontext.set(\"hist_umidade\", historico);\n\n// análise\nif (historico.length >= 2) {\n    let primeiro = historico[0];\n    let ultimo = historico[historico.length - 1];\n\n    if (ultimo > primeiro) {\n        msg.payload = \"💧 Umidade subindo\";\n    } else if (ultimo < primeiro) {\n        msg.payload = \"🌵 Umidade caindo\";\n    } else {\n        msg.payload = \"➖ Estável\";\n    }\n\n    return msg;\n}\n\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 580,
+        "wires": [
+            [
+                "ad916e3df33998aa"
+            ]
+        ]
+    },
+    {
+        "id": "ad916e3df33998aa",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "87fb7dcc2a7926ba",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "46db1112b40ad491",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "analise_umidade",
+        "func": "let hum = Number(msg.payload);\n\nif (hum >= 80) {\n    msg.payload = \"💦 Muito úmido\";\n}\nelse if (hum >= 40) {\n    msg.payload = \"🌱 Ideal\";\n}\nelse {\n    msg.payload = \"🌵 Ar seco\";\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 640,
+        "wires": [
+            [
+                "2e27e70d5eb68c74"
+            ]
+        ]
+    },
+    {
+        "id": "2e27e70d5eb68c74",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "a2c9970c4f5f6ca6",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "485604cf74307d85",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "alerta_umidade",
+        "func": "let hum = Number(msg.payload);\n\nlet alerta = null;\n\nif (hum < 30) {\n    alerta = {\n        nivel: \"CRÍTICO\",\n        mensagem: \"Ar extremamente seco\"\n    };\n}\nelse if (hum < 40) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Umidade baixa\"\n    };\n}\nelse if (hum > 85) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Umidade muito alta\"\n    };\n}\n\nif (!alerta) return null;\n\nlet msgUI = {\n    payload: `🚨 ${alerta.nivel}: ${alerta.mensagem}`\n};\n\n\nreturn msgUI;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 700,
+        "wires": [
+            [
+                "157cda93ab132ccc"
+            ]
+        ]
+    },
+    {
+        "id": "157cda93ab132ccc",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "31429977ee64abee",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "dbee237f9593066a",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "tendencia_pressao",
+        "func": "let historico = context.get(\"hist_pressao\") || [];\n\nlet press = Number(msg.payload);\n\n// salva\nhistorico.push(press);\n\n// mantém últimos 5\nif (historico.length > 5) {\n    historico.shift();\n}\n\ncontext.set(\"hist_pressao\", historico);\n\n// análise\nif (historico.length >= 2) {\n    let primeiro = historico[0];\n    let ultimo = historico[historico.length - 1];\n\n    if (ultimo > primeiro) {\n        msg.payload = \"📈 Pressão subindo\";\n    } else if (ultimo < primeiro) {\n        msg.payload = \"📉 Pressão caindo\";\n    } else {\n        msg.payload = \"➖ Estável\";\n    }\n\n    return msg;\n}\n\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 1000,
+        "wires": [
+            [
+                "e75968eb37840e52"
+            ]
+        ]
+    },
+    {
+        "id": "64f0cd5ddd529c59",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "analise_pressao",
+        "func": "let press = Number(msg.payload);\n\nif (press < 1000) {\n    msg.payload = \"🌧️ Alta chance de chuva\";\n}\nelse if (press >= 1000 && press <= 1020) {\n    msg.payload = \"⛅ Tempo estável\";\n}\nelse {\n    msg.payload = \"☀️ Tempo seco\";\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1060,
+        "wires": [
+            [
+                "a1e41f04e5e49bf2"
+            ]
+        ]
+    },
+    {
+        "id": "094d0a689b0fb404",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "alerta_pressao",
+        "func": "let press = Number(msg.payload);\n\nlet alerta = null;\n\nif (press < 980) {\n    alerta = {\n        nivel: \"CRÍTICO\",\n        mensagem: \"Possível tempestade forte\"\n    };\n}\nelse if (press < 1000) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Possível chuva\"\n    };\n}\nelse if (press > 1030) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Tempo muito seco\"\n    };\n}\n\nif (!alerta) return null;\n\nlet msgUI = {\n    payload: `🚨 ${alerta.nivel}: ${alerta.mensagem}`\n};\n\n\nreturn msgUI;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1120,
+        "wires": [
+            [
+                "2ea25de56cacf4c4"
+            ]
+        ]
+    },
+    {
+        "id": "e75968eb37840e52",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "87fb7dcc2a7926ba",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "a1e41f04e5e49bf2",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "a2c9970c4f5f6ca6",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "2ea25de56cacf4c4",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
+        "group": "31429977ee64abee",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 530,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "b8a9225194bdae5a",
+        "type": "ui_button",
+        "z": "3c3a538362403657",
+        "name": "",
+        "group": "bcb979af3a1e5078",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Carregar Histórico",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 1240,
+        "wires": [
+            [
+                "dedc26d5a185a7b2"
+            ]
+        ]
+    },
+    {
+        "id": "dedc26d5a185a7b2",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "query_historico",
+        "func": "msg.topic = `\nSELECT * FROM sensores \nORDER BY data_hora DESC \nLIMIT 20\n`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1240,
+        "wires": [
+            [
+                "04e63c943a205296"
+            ]
+        ]
+    },
+    {
+        "id": "e03f5def51355244",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "formatar_historico",
+        "func": "let dados = msg.payload;\n\n// para tabela\nlet tabela = dados.map(d => ({\n    data: d.data_hora,\n    temperatura: d.temperatura,\n    umidade: d.umidade,\n    pressao: d.pressao\n}));\n\n// para gráfico (temperatura exemplo)\nlet graficoTemp = {\n    series: [\"Temperatura\"],\n    data: [dados.map(d => d.temperatura)],\n    labels: dados.map(d => d.data_hora)\n};\n\nreturn [\n    { payload: tabela },\n    { payload: graficoTemp }\n];",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 1240,
+        "wires": [
+            [
+                "afb7bb6edabfd446"
+            ]
+        ]
+    },
+    {
+        "id": "4ff081704a92516c",
+        "type": "http request",
+        "z": "3c3a538362403657",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.openweathermap.org/data/2.5/weather?q=Osasco&appid=ab61b0f9e8c275a98ddb16f9b76e78a7&units=metric&lang=pt_br",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 350,
+        "y": 1340,
+        "wires": [
+            [
+                "9fef3cf6cdedcfe6"
+            ]
+        ]
+    },
+    {
+        "id": "9fef3cf6cdedcfe6",
+        "type": "function",
+        "z": "3c3a538362403657",
+        "name": "Preparar Prompt GenIA",
+        "func": "let temp = msg.payload.main.temp;\nlet clima = msg.payload.weather[0].description;\nlet cidade = msg.payload.name;\n\nlet mensagem = `🌎 ${cidade}\\n🌡️ ${temp}°C\\n☁️ ${clima}`;\n\nif (temp > 30) {\n    mensagem += \"\\n🔥 Muito quente!\";\n} else if (temp < 10) {\n    mensagem += \"\\n❄️ Muito frio!\";\n}\n\nmsg.payload = mensagem;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1340,
+        "wires": [
+            [
+                "3bbe97c6fa9a4642"
+            ]
+        ]
+    },
+    {
+        "id": "520c4c7143baf989",
+        "type": "inject",
+        "z": "3c3a538362403657",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 1340,
+        "wires": [
+            [
+                "4ff081704a92516c"
+            ]
+        ]
+    },
+    {
+        "id": "3bbe97c6fa9a4642",
+        "type": "ui_text",
+        "z": "3c3a538362403657",
         "group": "62521591cfc289fc",
         "order": 0,
         "width": 0,
@@ -21,6 +1077,178 @@
         "wires": []
     },
     {
+        "id": "16cb7c15a4546a4a",
+        "type": "mysql",
+        "z": "3c3a538362403657",
+        "mydb": "31f2c57c959907a1",
+        "name": "",
+        "x": 690,
+        "y": 940,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "04e63c943a205296",
+        "type": "mysql",
+        "z": "3c3a538362403657",
+        "mydb": "31f2c57c959907a1",
+        "name": "",
+        "x": 550,
+        "y": 1240,
+        "wires": [
+            [
+                "e03f5def51355244"
+            ]
+        ]
+    },
+    {
+        "id": "afb7bb6edabfd446",
+        "type": "ui_table",
+        "z": "3c3a538362403657",
+        "group": "bcb979af3a1e5078",
+        "name": "",
+        "order": 1,
+        "width": "6",
+        "height": "13",
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 970,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "542122ca7238dba3",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.hivemq.com",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "de3f2f3b3c0b1b5a",
+        "type": "ui_group",
+        "name": "Temperatura",
+        "tab": "tab_main",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6b039e9e88e7bd3d",
+        "type": "ui_group",
+        "name": "Gráficos",
+        "tab": "tab_main",
+        "order": 4,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "56fad255a19a1384",
+        "type": "ui_group",
+        "name": "Umidade",
+        "tab": "tab_main",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "378afae7d4baa156",
+        "type": "ui_group",
+        "name": "Pressão",
+        "tab": "tab_main",
+        "order": 3,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6ef45ce1a4a3fa4a",
+        "type": "ui_group",
+        "name": "LED",
+        "tab": "tab_main",
+        "order": 9,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "87fb7dcc2a7926ba",
+        "type": "ui_group",
+        "name": "Tendência",
+        "tab": "tab_main",
+        "order": 6,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a2c9970c4f5f6ca6",
+        "type": "ui_group",
+        "name": "Analise",
+        "tab": "tab_main",
+        "order": 7,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "31429977ee64abee",
+        "type": "ui_group",
+        "name": "Alerta",
+        "tab": "tab_main",
+        "order": 8,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bcb979af3a1e5078",
+        "type": "ui_group",
+        "name": "Historico",
+        "tab": "tab_main",
+        "order": 5,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
         "id": "62521591cfc289fc",
         "type": "ui_group",
         "name": "API",
@@ -32,19 +1260,21 @@
         "className": ""
     },
     {
+        "id": "31f2c57c959907a1",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "localhost",
+        "port": "3306",
+        "db": "iot",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
         "id": "tab_main",
         "type": "ui_tab",
         "name": "Dashboard IoT",
         "icon": "dashboard",
         "disabled": false,
         "hidden": false
-    },
-    {
-        "id": "6851439097a1c72d",
-        "type": "global-config",
-        "env": [],
-        "modules": {
-            "node-red-dashboard": "3.6.6"
-        }
     }
 ]
