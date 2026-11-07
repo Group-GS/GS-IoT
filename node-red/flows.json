@@ -1,1125 +1,14 @@
 [
     {
-        "id": "3c3a538362403657",
+        "id": "267a804e8fd0c894",
         "type": "tab",
-        "label": "Monitoramento Ambiental",
-        "disabled": false
+        "label": "AlertaCidadao - Enchentes",
+        "disabled": false,
+        "info": "Fluxo de monitoramento de enchentes com MQTT, MySQL, API de Machine Learning e API de IA generativa.",
+        "env": []
     },
     {
-        "id": "abab0df1dfc359ad",
-        "type": "mqtt in",
-        "z": "3c3a538362403657",
-        "name": "",
-        "topic": "iot/temperatura",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "542122ca7238dba3",
-        "nl": false,
-        "rap": false,
-        "inputs": 0,
-        "x": 120,
-        "y": 200,
-        "wires": [
-            [
-                "f87e9d29fdb09742",
-                "cf9af722aafe2792",
-                "fa946028fee737ab",
-                "b9db70cc0cb2fa96",
-                "07d79ee61fabf422",
-                "ce057add7155cb88",
-                "dec5c33c093d1e4f"
-            ]
-        ]
-    },
-    {
-        "id": "f87e9d29fdb09742",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "Temperatura",
-        "func": "const temp = Number(msg.payload);\n\nif (isNaN(temp) || temp < -10 || temp > 60) {\n    node.warn(\"Temperatura fora do esperado\");\n    return null;\n}\n\nlet descricao = \"\";\n\nif (temp >= 35) {\n    descricao = \"Calor extremo\";\n}\nelse if (temp >= 30) {\n    descricao = \"Temperatura alta\";\n}\nelse if (temp >= 18) {\n    descricao = \"Normal\";\n}\nelse {\n    descricao = \"Frio\";\n}\n\nmsg.payload = descricao;\n\nlet led = {};\n\nif (temp >= 35) {\n    led.payload = \"ON\";\n} else {\n    led.payload = \"OFF\";\n}\n\nled.topic = \"iot/alerta_temp\";\n\nreturn [msg, led];",
-        "outputs": 2,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 100,
-        "wires": [
-            [
-                "ac591dcd171002d0"
-            ],
-            [
-                "d528555f2084d6a4"
-            ]
-        ]
-    },
-    {
-        "id": "fa946028fee737ab",
-        "type": "ui_gauge",
-        "z": "3c3a538362403657",
-        "name": "",
-        "group": "de3f2f3b3c0b1b5a",
-        "width": "6",
-        "height": "4",
-        "gtype": "gage",
-        "title": "Temperatura",
-        "label": "°C",
-        "format": "{{value}} °C",
-        "min": "-10",
-        "max": "60",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 350,
-        "y": 40,
-        "wires": []
-    },
-    {
-        "id": "cf9af722aafe2792",
-        "type": "ui_chart",
-        "z": "3c3a538362403657",
-        "name": "",
-        "group": "6b039e9e88e7bd3d",
-        "width": "",
-        "height": "",
-        "label": "Temperatura",
-        "chartType": "line",
-        "xformat": "HH:mm:ss",
-        "nodata": "",
-        "dot": false,
-        "ymin": "",
-        "ymax": "",
-        "removeOlder": "1",
-        "removeOlderPoints": "",
-        "removeOlderUnit": "3600",
-        "cutout": "",
-        "useOneColor": false,
-        "useUTC": false,
-        "colors": [
-            "#1f77b4",
-            "#aec7e8",
-            "#ff7f0e",
-            "#2ca02c",
-            "#98df8a",
-            "#d62728",
-            "#ff9896",
-            "#9467bd",
-            "#c5b0d5"
-        ],
-        "outputs": 1,
-        "useDifferentColor": false,
-        "className": "",
-        "x": 350,
-        "y": 160,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "ac591dcd171002d0",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "de3f2f3b3c0b1b5a",
-        "width": "0",
-        "height": "0",
-        "name": "",
-        "label": "Status Temp: ",
-        "format": "{{msg.payload}}",
-        "layout": "row-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": "",
-        "color": "#000000",
-        "x": 550,
-        "y": 80,
-        "wires": []
-    },
-    {
-        "id": "9a511fb1ac6e3f75",
-        "type": "mqtt in",
-        "z": "3c3a538362403657",
-        "name": "",
-        "topic": "iot/umidade",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "542122ca7238dba3",
-        "nl": false,
-        "rap": false,
-        "inputs": 0,
-        "x": 130,
-        "y": 460,
-        "wires": [
-            [
-                "523b53e101d4be1a",
-                "3bf9d3b51e05b52a",
-                "49f11684b9301e5f",
-                "b9db70cc0cb2fa96",
-                "08ac34928228d06f",
-                "46db1112b40ad491",
-                "485604cf74307d85"
-            ]
-        ]
-    },
-    {
-        "id": "523b53e101d4be1a",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "Umidade",
-        "func": "const hum = Number(msg.payload);\n\nif (isNaN(hum) || hum < 0 || hum > 100) {\n    node.warn(\"Umidade fora do esperado\");\n    return null;\n}\n\nlet descricao = \"\";\n\nif (hum >= 80) { \n    descricao = \"Umidade alta\";\n}\nelse if (hum >= 40) {\n    descricao = \"Normal\";\n}\nelse {\n    descricao = \"Ar seco\";\n}\n\nmsg.payload = descricao;\n\nlet led = {};\n\nif (hum < 40) {\n    led.payload = \"ON\";\n} else {\n    led.payload = \"OFF\";\n}\n\nled.topic = \"iot/alerta_umidade\";\n\nreturn [msg, led];",
-        "outputs": 2,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 340,
-        "y": 460,
-        "wires": [
-            [
-                "0d787258dd3546a3"
-            ],
-            [
-                "04bd798ccdf3a1e1"
-            ]
-        ]
-    },
-    {
-        "id": "49f11684b9301e5f",
-        "type": "ui_gauge",
-        "z": "3c3a538362403657",
-        "name": "",
-        "group": "56fad255a19a1384",
-        "width": "",
-        "height": "",
-        "gtype": "gage",
-        "title": "Umidade",
-        "label": "%",
-        "format": "{{value}} %",
-        "min": 0,
-        "max": 100,
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 340,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "3bf9d3b51e05b52a",
-        "type": "ui_chart",
-        "z": "3c3a538362403657",
-        "name": "",
-        "group": "6b039e9e88e7bd3d",
-        "width": "",
-        "height": "",
-        "label": "Umidade",
-        "chartType": "line",
-        "xformat": "HH:mm:ss",
-        "nodata": "",
-        "dot": false,
-        "ymin": "",
-        "ymax": "",
-        "removeOlder": "1",
-        "removeOlderPoints": "",
-        "removeOlderUnit": "3600",
-        "cutout": "",
-        "useOneColor": false,
-        "useUTC": false,
-        "colors": [
-            "#1f77b4",
-            "#aec7e8",
-            "#ff7f0e",
-            "#2ca02c",
-            "#98df8a",
-            "#d62728",
-            "#ff9896",
-            "#9467bd",
-            "#c5b0d5"
-        ],
-        "outputs": 1,
-        "useDifferentColor": false,
-        "className": "",
-        "x": 340,
-        "y": 520,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "0d787258dd3546a3",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "56fad255a19a1384",
-        "width": "",
-        "height": "",
-        "name": "",
-        "label": "Status Umidade: ",
-        "format": "{{msg.payload}}",
-        "layout": "row-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": "",
-        "color": "#000000",
-        "x": 570,
-        "y": 420,
-        "wires": []
-    },
-    {
-        "id": "6fc125cf4988a9ce",
-        "type": "mqtt in",
-        "z": "3c3a538362403657",
-        "name": "",
-        "topic": "iot/pressao",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "542122ca7238dba3",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 140,
-        "y": 880,
-        "wires": [
-            [
-                "17611eedb7c6f422",
-                "c8bdd4ee38366380",
-                "d31989e4973e52ac",
-                "b9db70cc0cb2fa96",
-                "dbee237f9593066a",
-                "64f0cd5ddd529c59",
-                "094d0a689b0fb404"
-            ]
-        ]
-    },
-    {
-        "id": "17611eedb7c6f422",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "Pressão",
-        "func": "const pressao = Number(msg.payload);\n\nif (isNaN(pressao) || pressao < 800 || pressao > 1200) {\n    node.warn(\"Pressão fora do esperado\");\n    return null;\n}\n\nlet descricao = \"\";\n\nif (pressao >= 1020) {\n    descricao = \"Pressão alta\";\n}\nelse if (pressao >= 1000) {\n    descricao = \"Normal\";\n}\nelse {\n    descricao = \"Pressão baixa\";\n}\n\nmsg.payload = descricao;\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 340,
-        "y": 820,
-        "wires": [
-            [
-                "a9681f1126821cf7"
-            ]
-        ]
-    },
-    {
-        "id": "c8bdd4ee38366380",
-        "type": "ui_gauge",
-        "z": "3c3a538362403657",
-        "name": "",
-        "group": "378afae7d4baa156",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "gtype": "gage",
-        "title": "Pressão",
-        "label": "hPa",
-        "format": "{{value}}",
-        "min": "800",
-        "max": "1200",
-        "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
-        ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 340,
-        "y": 760,
-        "wires": []
-    },
-    {
-        "id": "d31989e4973e52ac",
-        "type": "ui_chart",
-        "z": "3c3a538362403657",
-        "name": "",
-        "group": "6b039e9e88e7bd3d",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "label": "Pressão",
-        "chartType": "line",
-        "legend": "false",
-        "xformat": "HH:mm:ss",
-        "interpolate": "linear",
-        "nodata": "",
-        "dot": false,
-        "ymin": "",
-        "ymax": "",
-        "removeOlder": 1,
-        "removeOlderPoints": "",
-        "removeOlderUnit": "3600",
-        "cutout": 0,
-        "useOneColor": false,
-        "useUTC": false,
-        "colors": [
-            "#1f77b4",
-            "#aec7e8",
-            "#ff7f0e",
-            "#2ca02c",
-            "#98df8a",
-            "#d62728",
-            "#ff9896",
-            "#9467bd",
-            "#c5b0d5"
-        ],
-        "outputs": 1,
-        "useDifferentColor": false,
-        "className": "",
-        "x": 340,
-        "y": 880,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "a9681f1126821cf7",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "378afae7d4baa156",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Status Pressão: ",
-        "format": "{{msg.payload}}",
-        "layout": "row-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 560,
-        "y": 820,
-        "wires": []
-    },
-    {
-        "id": "bd5d624277960ed9",
-        "type": "mqtt out",
-        "z": "3c3a538362403657",
-        "name": "",
-        "topic": "iot/led",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "542122ca7238dba3",
-        "x": 830,
-        "y": 220,
-        "wires": []
-    },
-    {
-        "id": "d528555f2084d6a4",
-        "type": "ui_switch",
-        "z": "3c3a538362403657",
-        "name": "",
-        "label": "Alerta de Calor",
-        "tooltip": "",
-        "group": "6ef45ce1a4a3fa4a",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "decouple": "false",
-        "topic": "iot/alerta_temp",
-        "topicType": "str",
-        "style": "",
-        "onvalue": "ON",
-        "onvalueType": "str",
-        "onicon": "",
-        "oncolor": "",
-        "offvalue": "OFF",
-        "offvalueType": "str",
-        "officon": "",
-        "offcolor": "",
-        "animate": false,
-        "className": "",
-        "x": 560,
-        "y": 140,
-        "wires": [
-            [
-                "bd5d624277960ed9"
-            ]
-        ]
-    },
-    {
-        "id": "04bd798ccdf3a1e1",
-        "type": "ui_switch",
-        "z": "3c3a538362403657",
-        "name": "",
-        "label": "Alerta de Ar Seco",
-        "tooltip": "",
-        "group": "6ef45ce1a4a3fa4a",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "passthru": true,
-        "decouple": "false",
-        "topic": "iot/alerta_umidade",
-        "topicType": "str",
-        "style": "",
-        "onvalue": "ON",
-        "onvalueType": "str",
-        "onicon": "",
-        "oncolor": "",
-        "offvalue": "OFF",
-        "offvalueType": "str",
-        "officon": "",
-        "offcolor": "",
-        "animate": false,
-        "className": "",
-        "x": 570,
-        "y": 500,
-        "wires": [
-            [
-                "bd5d624277960ed9"
-            ]
-        ]
-    },
-    {
-        "id": "b9db70cc0cb2fa96",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "Acumula",
-        "func": "// Recupera o estado atual ou inicia com valores padrão\nlet dados = context.get(\"dados\") || {\n    temperatura: null,\n    umidade: null,\n    pressao: null\n};\n\n// Atualiza o dado específico baseado no tópico MQTT\nif (msg.topic === \"iot/temperatura\") dados.temperatura = Number(msg.payload);\nif (msg.topic === \"iot/umidade\")     dados.umidade = Number(msg.payload);\nif (msg.topic === \"iot/pressao\")     dados.pressao = Number(msg.payload);\n\n// Salva o estado atualizado no contexto\ncontext.set(\"dados\", dados);\n\n// Só envia se todos os três campos já tiverem recebido pelo menos um valor\nif (\n    dados.temperatura !== null &&\n    dados.umidade !== null &&\n    dados.pressao !== null\n) {\n    // Clona o objeto para evitar problemas de concorrência\n    msg.payload = { ...dados }; \n    msg.payload.timestamp = new Date();\n    \n    return msg;\n}\n\nreturn null;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 340,
-        "y": 940,
-        "wires": [
-            [
-                "30ebb3d8e27ffec2"
-            ]
-        ]
-    },
-    {
-        "id": "30ebb3d8e27ffec2",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "MySql",
-        "func": "let d = msg.payload;\n\n\nmsg.topic = `INSERT INTO sensores (temperatura, umidade, pressao, data_hora) VALUES (${d.temperatura}, ${d.umidade}, ${d.pressao}, NOW());`;\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 530,
-        "y": 940,
-        "wires": [
-            [
-                "16cb7c15a4546a4a"
-            ]
-        ]
-    },
-    {
-        "id": "07d79ee61fabf422",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "tendencia_temp",
-        "func": "let historico = context.get(\"hist_temp\") || [];\n\nlet temp = Number(msg.payload);\n\n// salva valor\nhistorico.push(temp);\n\n// mantém últimos 5\nif (historico.length > 5) {\n    historico.shift();\n}\n\ncontext.set(\"hist_temp\", historico);\n\n// análise\nif (historico.length >= 2) {\n    let primeiro = historico[0];\n    let ultimo = historico[historico.length - 1];\n\n    if (ultimo > primeiro) {\n        msg.payload = \"📈 Temperatura subindo\";\n    } else if (ultimo < primeiro) {\n        msg.payload = \"📉 Temperatura caindo\";\n    } else {\n        msg.payload = \"➖ Estável\";\n    }\n\n    return msg;\n}\n\nreturn null;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 360,
-        "y": 220,
-        "wires": [
-            [
-                "991d77ab39a16533"
-            ]
-        ]
-    },
-    {
-        "id": "991d77ab39a16533",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "87fb7dcc2a7926ba",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 220,
-        "wires": []
-    },
-    {
-        "id": "ce057add7155cb88",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "analise_temp",
-        "func": "let temp = Number(msg.payload);\n\nif (temp >= 35) {\n    msg.payload = \"🔥 Calor extremo\";\n}\nelse if (temp >= 30) {\n    msg.payload = \"☀️ Quente\";\n}\nelse if (temp >= 18) {\n    msg.payload = \"🌤️ Normal\";\n}\nelse {\n    msg.payload = \"❄️ Frio\";\n}\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 280,
-        "wires": [
-            [
-                "d75c32ca23cf5af6"
-            ]
-        ]
-    },
-    {
-        "id": "d75c32ca23cf5af6",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "a2c9970c4f5f6ca6",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 280,
-        "wires": []
-    },
-    {
-        "id": "dec5c33c093d1e4f",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "alerta_temp",
-        "func": "let temp = Number(msg.payload);\n\nlet alerta = null;\n\nif (temp >= 35) {\n    alerta = {\n        nivel: \"CRÍTICO\",\n        mensagem: \"Temperatura extremamente alta\"\n    };\n}\nelse if (temp >= 30) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Temperatura elevada\"\n    };\n}\n\nif (!alerta) return null;\n\nlet msgUI = {\n    payload: `🚨 ${alerta.nivel}: ${alerta.mensagem}`\n};\n\n\nreturn msgUI;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 340,
-        "wires": [
-            [
-                "649fc4db5ea4d2c8"
-            ]
-        ]
-    },
-    {
-        "id": "649fc4db5ea4d2c8",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "31429977ee64abee",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 340,
-        "wires": []
-    },
-    {
-        "id": "08ac34928228d06f",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "tendencia_umidade",
-        "func": "let historico = context.get(\"hist_umidade\") || [];\n\nlet hum = Number(msg.payload);\n\n// adiciona valor\nhistorico.push(hum);\n\n// mantém últimos 5\nif (historico.length > 5) {\n    historico.shift();\n}\n\ncontext.set(\"hist_umidade\", historico);\n\n// análise\nif (historico.length >= 2) {\n    let primeiro = historico[0];\n    let ultimo = historico[historico.length - 1];\n\n    if (ultimo > primeiro) {\n        msg.payload = \"💧 Umidade subindo\";\n    } else if (ultimo < primeiro) {\n        msg.payload = \"🌵 Umidade caindo\";\n    } else {\n        msg.payload = \"➖ Estável\";\n    }\n\n    return msg;\n}\n\nreturn null;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 370,
-        "y": 580,
-        "wires": [
-            [
-                "ad916e3df33998aa"
-            ]
-        ]
-    },
-    {
-        "id": "ad916e3df33998aa",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "87fb7dcc2a7926ba",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 580,
-        "wires": []
-    },
-    {
-        "id": "46db1112b40ad491",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "analise_umidade",
-        "func": "let hum = Number(msg.payload);\n\nif (hum >= 80) {\n    msg.payload = \"💦 Muito úmido\";\n}\nelse if (hum >= 40) {\n    msg.payload = \"🌱 Ideal\";\n}\nelse {\n    msg.payload = \"🌵 Ar seco\";\n}\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 370,
-        "y": 640,
-        "wires": [
-            [
-                "2e27e70d5eb68c74"
-            ]
-        ]
-    },
-    {
-        "id": "2e27e70d5eb68c74",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "a2c9970c4f5f6ca6",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 640,
-        "wires": []
-    },
-    {
-        "id": "485604cf74307d85",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "alerta_umidade",
-        "func": "let hum = Number(msg.payload);\n\nlet alerta = null;\n\nif (hum < 30) {\n    alerta = {\n        nivel: \"CRÍTICO\",\n        mensagem: \"Ar extremamente seco\"\n    };\n}\nelse if (hum < 40) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Umidade baixa\"\n    };\n}\nelse if (hum > 85) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Umidade muito alta\"\n    };\n}\n\nif (!alerta) return null;\n\nlet msgUI = {\n    payload: `🚨 ${alerta.nivel}: ${alerta.mensagem}`\n};\n\n\nreturn msgUI;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 360,
-        "y": 700,
-        "wires": [
-            [
-                "157cda93ab132ccc"
-            ]
-        ]
-    },
-    {
-        "id": "157cda93ab132ccc",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "31429977ee64abee",
-        "order": 1,
-        "width": "0",
-        "height": "0",
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 700,
-        "wires": []
-    },
-    {
-        "id": "dbee237f9593066a",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "tendencia_pressao",
-        "func": "let historico = context.get(\"hist_pressao\") || [];\n\nlet press = Number(msg.payload);\n\n// salva\nhistorico.push(press);\n\n// mantém últimos 5\nif (historico.length > 5) {\n    historico.shift();\n}\n\ncontext.set(\"hist_pressao\", historico);\n\n// análise\nif (historico.length >= 2) {\n    let primeiro = historico[0];\n    let ultimo = historico[historico.length - 1];\n\n    if (ultimo > primeiro) {\n        msg.payload = \"📈 Pressão subindo\";\n    } else if (ultimo < primeiro) {\n        msg.payload = \"📉 Pressão caindo\";\n    } else {\n        msg.payload = \"➖ Estável\";\n    }\n\n    return msg;\n}\n\nreturn null;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 370,
-        "y": 1000,
-        "wires": [
-            [
-                "e75968eb37840e52"
-            ]
-        ]
-    },
-    {
-        "id": "64f0cd5ddd529c59",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "analise_pressao",
-        "func": "let press = Number(msg.payload);\n\nif (press < 1000) {\n    msg.payload = \"🌧️ Alta chance de chuva\";\n}\nelse if (press >= 1000 && press <= 1020) {\n    msg.payload = \"⛅ Tempo estável\";\n}\nelse {\n    msg.payload = \"☀️ Tempo seco\";\n}\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 360,
-        "y": 1060,
-        "wires": [
-            [
-                "a1e41f04e5e49bf2"
-            ]
-        ]
-    },
-    {
-        "id": "094d0a689b0fb404",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "alerta_pressao",
-        "func": "let press = Number(msg.payload);\n\nlet alerta = null;\n\nif (press < 980) {\n    alerta = {\n        nivel: \"CRÍTICO\",\n        mensagem: \"Possível tempestade forte\"\n    };\n}\nelse if (press < 1000) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Possível chuva\"\n    };\n}\nelse if (press > 1030) {\n    alerta = {\n        nivel: \"ATENÇÃO\",\n        mensagem: \"Tempo muito seco\"\n    };\n}\n\nif (!alerta) return null;\n\nlet msgUI = {\n    payload: `🚨 ${alerta.nivel}: ${alerta.mensagem}`\n};\n\n\nreturn msgUI;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 360,
-        "y": 1120,
-        "wires": [
-            [
-                "2ea25de56cacf4c4"
-            ]
-        ]
-    },
-    {
-        "id": "e75968eb37840e52",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "87fb7dcc2a7926ba",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 1000,
-        "wires": []
-    },
-    {
-        "id": "a1e41f04e5e49bf2",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "a2c9970c4f5f6ca6",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 1060,
-        "wires": []
-    },
-    {
-        "id": "2ea25de56cacf4c4",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "31429977ee64abee",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "",
-        "format": "{{msg.payload}}",
-        "layout": "col-center",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 530,
-        "y": 1120,
-        "wires": []
-    },
-    {
-        "id": "b8a9225194bdae5a",
-        "type": "ui_button",
-        "z": "3c3a538362403657",
-        "name": "",
-        "group": "bcb979af3a1e5078",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "passthru": false,
-        "label": "Carregar Histórico",
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 150,
-        "y": 1240,
-        "wires": [
-            [
-                "dedc26d5a185a7b2"
-            ]
-        ]
-    },
-    {
-        "id": "dedc26d5a185a7b2",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "query_historico",
-        "func": "msg.topic = `\nSELECT * FROM sensores \nORDER BY data_hora DESC \nLIMIT 20\n`;\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 360,
-        "y": 1240,
-        "wires": [
-            [
-                "04e63c943a205296"
-            ]
-        ]
-    },
-    {
-        "id": "e03f5def51355244",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "formatar_historico",
-        "func": "let dados = msg.payload;\n\n// para tabela\nlet tabela = dados.map(d => ({\n    data: d.data_hora,\n    temperatura: d.temperatura,\n    umidade: d.umidade,\n    pressao: d.pressao\n}));\n\n// para gráfico (temperatura exemplo)\nlet graficoTemp = {\n    series: [\"Temperatura\"],\n    data: [dados.map(d => d.temperatura)],\n    labels: dados.map(d => d.data_hora)\n};\n\nreturn [\n    { payload: tabela },\n    { payload: graficoTemp }\n];",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 750,
-        "y": 1240,
-        "wires": [
-            [
-                "afb7bb6edabfd446"
-            ]
-        ]
-    },
-    {
-        "id": "4ff081704a92516c",
-        "type": "http request",
-        "z": "3c3a538362403657",
-        "name": "",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "https://api.openweathermap.org/data/2.5/weather?q=Osasco&appid=ab61b0f9e8c275a98ddb16f9b76e78a7&units=metric&lang=pt_br",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 350,
-        "y": 1340,
-        "wires": [
-            [
-                "9fef3cf6cdedcfe6"
-            ]
-        ]
-    },
-    {
-        "id": "9fef3cf6cdedcfe6",
-        "type": "function",
-        "z": "3c3a538362403657",
-        "name": "Preparar Prompt GenIA",
-        "func": "let temp = msg.payload.main.temp;\nlet clima = msg.payload.weather[0].description;\nlet cidade = msg.payload.name;\n\nlet mensagem = `🌎 ${cidade}\\n🌡️ ${temp}°C\\n☁️ ${clima}`;\n\nif (temp > 30) {\n    mensagem += \"\\n🔥 Muito quente!\";\n} else if (temp < 10) {\n    mensagem += \"\\n❄️ Muito frio!\";\n}\n\nmsg.payload = mensagem;\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 580,
-        "y": 1340,
-        "wires": [
-            [
-                "3bbe97c6fa9a4642"
-            ]
-        ]
-    },
-    {
-        "id": "520c4c7143baf989",
-        "type": "inject",
-        "z": "3c3a538362403657",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 130,
-        "y": 1340,
-        "wires": [
-            [
-                "4ff081704a92516c"
-            ]
-        ]
-    },
-    {
-        "id": "3bbe97c6fa9a4642",
-        "type": "ui_text",
-        "z": "3c3a538362403657",
-        "group": "62521591cfc289fc",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Clima Externo",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "className": "",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 810,
-        "y": 1340,
-        "wires": []
-    },
-    {
-        "id": "16cb7c15a4546a4a",
-        "type": "mysql",
-        "z": "3c3a538362403657",
-        "mydb": "31f2c57c959907a1",
-        "name": "",
-        "x": 690,
-        "y": 940,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "04e63c943a205296",
-        "type": "mysql",
-        "z": "3c3a538362403657",
-        "mydb": "31f2c57c959907a1",
-        "name": "",
-        "x": 550,
-        "y": 1240,
-        "wires": [
-            [
-                "e03f5def51355244"
-            ]
-        ]
-    },
-    {
-        "id": "afb7bb6edabfd446",
-        "type": "ui_table",
-        "z": "3c3a538362403657",
-        "group": "bcb979af3a1e5078",
-        "name": "",
-        "order": 1,
-        "width": "6",
-        "height": "13",
-        "columns": [],
-        "outputs": 0,
-        "cts": false,
-        "x": 970,
-        "y": 1240,
-        "wires": []
-    },
-    {
-        "id": "542122ca7238dba3",
+        "id": "56f5d9945df90a76",
         "type": "mqtt-broker",
         "name": "",
         "broker": "broker.hivemq.com",
@@ -1150,43 +39,50 @@
         "sessionExpiry": ""
     },
     {
-        "id": "de3f2f3b3c0b1b5a",
+        "id": "cb0dc9ebce350b39",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "localhost",
+        "port": "3306",
+        "db": "iot_pet",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "97ea2c85d50cf5d7",
+        "type": "ui_tab",
+        "name": "Monitoramento Pet",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "55729aca0595c36f",
         "type": "ui_group",
-        "name": "Temperatura",
-        "tab": "tab_main",
+        "name": "Histórico de Eventos",
+        "tab": "97ea2c85d50cf5d7",
         "order": 1,
         "disp": true,
-        "width": "6",
+        "width": "7",
         "collapse": false,
         "className": ""
     },
     {
-        "id": "6b039e9e88e7bd3d",
+        "id": "78892af94cd0b8db",
         "type": "ui_group",
-        "name": "Gráficos",
-        "tab": "tab_main",
-        "order": 4,
-        "disp": true,
-        "width": "6",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "56fad255a19a1384",
-        "type": "ui_group",
-        "name": "Umidade",
-        "tab": "tab_main",
+        "name": "Temperatura do Pet",
+        "tab": "97ea2c85d50cf5d7",
         "order": 2,
         "disp": true,
-        "width": "6",
+        "width": 6,
         "collapse": false,
         "className": ""
     },
     {
-        "id": "378afae7d4baa156",
+        "id": "5d2454f62135af04",
         "type": "ui_group",
-        "name": "Pressão",
-        "tab": "tab_main",
+        "name": "Atividade do Pet",
+        "tab": "97ea2c85d50cf5d7",
         "order": 3,
         "disp": true,
         "width": 6,
@@ -1194,87 +90,906 @@
         "className": ""
     },
     {
-        "id": "6ef45ce1a4a3fa4a",
-        "type": "ui_group",
-        "name": "LED",
-        "tab": "tab_main",
-        "order": 9,
-        "disp": true,
-        "width": 6,
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "87fb7dcc2a7926ba",
-        "type": "ui_group",
-        "name": "Tendência",
-        "tab": "tab_main",
-        "order": 6,
-        "disp": true,
-        "width": 6,
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "a2c9970c4f5f6ca6",
-        "type": "ui_group",
-        "name": "Analise",
-        "tab": "tab_main",
-        "order": 7,
-        "disp": true,
-        "width": 6,
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "31429977ee64abee",
-        "type": "ui_group",
-        "name": "Alerta",
-        "tab": "tab_main",
-        "order": 8,
-        "disp": true,
-        "width": "6",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "bcb979af3a1e5078",
-        "type": "ui_group",
-        "name": "Historico",
-        "tab": "tab_main",
-        "order": 5,
-        "disp": true,
-        "width": "6",
-        "collapse": false,
-        "className": ""
-    },
-    {
-        "id": "62521591cfc289fc",
+        "id": "b9fbce9b118361dd",
         "type": "ui_group",
         "name": "API",
-        "tab": "tab_main",
-        "order": 10,
+        "tab": "97ea2c85d50cf5d7",
+        "order": 5,
         "disp": true,
-        "width": 6,
+        "width": "9",
         "collapse": false,
         "className": ""
     },
     {
-        "id": "31f2c57c959907a1",
+        "id": "31fed98b9243d93f",
+        "type": "ui_group",
+        "name": "Gráficos",
+        "tab": "97ea2c85d50cf5d7",
+        "order": 4,
+        "disp": true,
+        "width": "5",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "1fb3a032a6b1313f",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#0094CE",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#1bbfff",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#0094ce",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "ac100003",
+        "type": "mqtt-broker",
+        "name": "Broker MQTT local",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "node-red-alertacidadao",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ac_mqtt_broker",
+        "type": "mqtt-broker",
+        "name": "MQTT AlertaCidadao",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "nodered-alertacidadao",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ac_mqtt",
+        "type": "mqtt-broker",
+        "name": "Broker MQTT público (teste)",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "clientid": "alertacidadao-node-red",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ac_mysql_cfg",
         "type": "MySQLdatabase",
-        "name": "",
+        "name": "Banco AlertaCidadao",
         "host": "localhost",
         "port": "3306",
-        "db": "iot",
+        "db": "alertacidadao",
         "tz": "",
         "charset": "UTF8"
     },
     {
-        "id": "tab_main",
+        "id": "ac_ui_tab",
         "type": "ui_tab",
-        "name": "Dashboard IoT",
-        "icon": "dashboard",
+        "name": "AlertaCidadão",
+        "icon": "warning",
         "disabled": false,
         "hidden": false
+    },
+    {
+        "id": "ac_group_level",
+        "type": "ui_group",
+        "name": "Nível da água",
+        "tab": "ac_ui_tab",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ac_group_rain",
+        "type": "ui_group",
+        "name": "Chuva",
+        "tab": "ac_ui_tab",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ac_group_risk",
+        "type": "ui_group",
+        "name": "Classificação e alertas",
+        "tab": "ac_ui_tab",
+        "order": 3,
+        "disp": true,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ac_group_chart",
+        "type": "ui_group",
+        "name": "Gráficos",
+        "tab": "ac_ui_tab",
+        "order": 4,
+        "disp": true,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ac_group_history",
+        "type": "ui_group",
+        "name": "Histórico de medições",
+        "tab": "ac_ui_tab",
+        "order": 5,
+        "disp": true,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "957c9bc257408906",
+        "type": "mqtt in",
+        "z": "267a804e8fd0c894",
+        "name": "Telemetria dos pontos",
+        "topic": "enchente/+/telemetria",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "ac_mqtt",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 180,
+        "wires": [
+            [
+                "8d47ba10092938c0"
+            ]
+        ]
+    },
+    {
+        "id": "8d47ba10092938c0",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Validar e preparar telemetria",
+        "func": "// Aceita JSON publicado no tópico enchente/<ponto>/telemetria.\n// Exemplo: {\"nivel_agua_cm\":85.5,\"chuva_mm\":12.4,\"data_hora\":\"2026-11-06T08:00:00\"}\nlet dados = msg.payload;\nif (typeof dados === \"string\") {\n    try { dados = JSON.parse(dados); }\n    catch (e) { node.warn(\"Payload MQTT não contém JSON válido.\"); return null; }\n}\nconst topico = String(msg.topic || \"\");\nconst match = topico.match(/^enchente\\/([A-Za-z0-9_-]+)\\/telemetria$/);\nif (!match || !dados || typeof dados !== \"object\") {\n    node.warn(\"Tópico ou estrutura da telemetria inválida.\"); return null;\n}\nconst ponto = match[1];\nconst nivel = Number(dados.nivel_agua_cm);\nconst chuva = Number(dados.chuva_mm ?? 0);\nconst dataHora = dados.data_hora || new Date().toISOString();\nconst instante = Date.parse(dataHora);\nif (!Number.isFinite(nivel) || nivel < 0 || nivel > 1000 ||\n    !Number.isFinite(chuva) || chuva < 0 || chuva > 1000 ||\n    !Number.isFinite(instante)) {\n    node.warn(\"Medição inválida: confira nível, chuva e data_hora.\"); return null;\n}\nconst anterior = context.get(\"ultima_\" + ponto);\nlet elevacao = 0;\nif (anterior && instante > anterior.instante) {\n    const horas = (instante - anterior.instante) / 3600000;\n    elevacao = (nivel - anterior.nivel) / horas;\n}\ncontext.set(\"ultima_\" + ponto, {nivel, instante});\nconst medicao = {\n    ponto_monitoramento: ponto,\n    nivel_agua_cm: nivel,\n    chuva_mm: chuva,\n    elevacao_cm_h: Number(elevacao.toFixed(2)),\n    data_hora: new Date(instante).toISOString()\n};\nconst sql = {\n    topic: \"INSERT INTO leituras_enchente (ponto_monitoramento, nivel_agua_cm, chuva_mm, elevacao_cm_h, data_hora) VALUES (\" +\n        \"'\" + ponto + \"', \" + nivel + \", \" + chuva + \", \" + medicao.elevacao_cm_h + \", '\" +\n        medicao.data_hora.slice(0,19).replace(\"T\",\" \") + \"')\"\n};\nconst gaugeNivel = {payload:nivel};\nconst gaugeChuva = {payload:chuva};\nconst chart = {payload:nivel, topic:\"Ponto \" + ponto};\nconst paraML = {payload:medicao, headers:{\"Content-Type\":\"application/json\"}};\nreturn [sql, gaugeNivel, gaugeChuva, chart, paraML];",
+        "outputs": 5,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "6a43885303805bc4"
+            ],
+            [
+                "db92b38fe9db0f80"
+            ],
+            [
+                "fe07c82547388845"
+            ],
+            [
+                "45f90e48c36f5b26"
+            ],
+            [
+                "6ebf9e322ecdee8a"
+            ]
+        ]
+    },
+    {
+        "id": "6a43885303805bc4",
+        "type": "mysql",
+        "z": "267a804e8fd0c894",
+        "mydb": "ac_mysql_cfg",
+        "name": "Salvar medição",
+        "x": 820,
+        "y": 60,
+        "wires": [
+            [
+                "35397c120ad087d1"
+            ]
+        ]
+    },
+    {
+        "id": "35397c120ad087d1",
+        "type": "debug",
+        "z": "267a804e8fd0c894",
+        "name": "Resultado MySQL",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1110,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "db92b38fe9db0f80",
+        "type": "ui_gauge",
+        "z": "267a804e8fd0c894",
+        "name": "Nível da água",
+        "group": "ac_group_level",
+        "order": 1,
+        "width": 6,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Nível da água",
+        "label": "cm",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "300",
+        "colors": [
+            "#2ecc71",
+            "#f1c40f",
+            "#e74c3c"
+        ],
+        "seg1": "100",
+        "seg2": "200",
+        "diff": false,
+        "className": "",
+        "x": 820,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "fe07c82547388845",
+        "type": "ui_gauge",
+        "z": "267a804e8fd0c894",
+        "name": "Chuva acumulada informada",
+        "group": "ac_group_rain",
+        "order": 1,
+        "width": 6,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Chuva informada",
+        "label": "mm",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#2ecc71",
+            "#f1c40f",
+            "#e74c3c"
+        ],
+        "seg1": "30",
+        "seg2": "60",
+        "diff": false,
+        "className": "",
+        "x": 860,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "45f90e48c36f5b26",
+        "type": "ui_chart",
+        "z": "267a804e8fd0c894",
+        "name": "Histórico do nível",
+        "group": "ac_group_chart",
+        "order": 1,
+        "width": 12,
+        "height": 5,
+        "label": "Nível da água por ponto",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Aguardando medições",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#ff7f0e",
+            "#2ca02c"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "10f3bac79c472bb1",
+        "type": "http request",
+        "z": "267a804e8fd0c894",
+        "name": "Consultar modelo ML (Python - porta 8000)",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8000/predict",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": true,
+        "headers": [],
+        "x": 1210,
+        "y": 300,
+        "wires": [
+            [
+                "4b1e92eb7e6b1a30",
+                "f553cd2a7c917010"
+            ]
+        ]
+    },
+    {
+        "id": "6ebf9e322ecdee8a",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Guardar última medição para contexto",
+        "func": "flow.set('ultima_medicao', msg.payload); return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 300,
+        "wires": [
+            [
+                "10f3bac79c472bb1"
+            ]
+        ]
+    },
+    {
+        "id": "4b1e92eb7e6b1a30",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Preparar contexto para IA generativa",
+        "func": "// Recebe a resposta do endpoint POST /predict.\n// Contrato esperado: classificacao, probabilidade e fatores.\nconst resultado = (msg.payload && typeof msg.payload === \"object\") ? msg.payload : {};\nconst classificacao = String(resultado.classificacao || \"INDEFINIDO\").toUpperCase();\nconst medicao = flow.get(\"ultima_medicao\") || {};\n\nif (!medicao || Object.keys(medicao).length === 0) {\n    node.warn(\"A medição original não foi encontrada no contexto do fluxo.\");\n}\n\nconst entrada = {\n    classificacao: classificacao,\n    probabilidade: resultado.probabilidade !== undefined ? resultado.probabilidade : null,\n    fatores: Array.isArray(resultado.fatores) ? resultado.fatores : [],\n    medicoes: medicao\n};\n\nmsg.classificacao = classificacao;\nmsg.payload = {\n    instrucoes: \"Escreva um alerta curto, claro e responsável em português do Brasil. Explique o nível de risco usando somente os dados recebidos. Não invente medições, não altere a classificação e recomende acompanhar os canais oficiais da Defesa Civil. Se o risco for elevado, oriente procurar local seguro conforme orientações oficiais.\",\n    dados: entrada\n};\nmsg.headers = { \"Content-Type\": \"application/json\", \"Accept\": \"application/json\" };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1530,
+        "y": 300,
+        "wires": [
+            [
+                "703d70ce0784a6e2",
+                "c5b5d6afb0ad77ee"
+            ]
+        ]
+    },
+    {
+        "id": "703d70ce0784a6e2",
+        "type": "http request",
+        "z": "267a804e8fd0c894",
+        "name": "Gerar alerta explicativo (API IA - porta 8001)",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:8001/gerar-alerta",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": true,
+        "headers": [],
+        "x": 1850,
+        "y": 300,
+        "wires": [
+            [
+                "4cdc426fb0f5b1b6",
+                "27700951e6c0563e"
+            ]
+        ]
+    },
+    {
+        "id": "4cdc426fb0f5b1b6",
+        "type": "ui_text",
+        "z": "267a804e8fd0c894",
+        "group": "ac_group_risk",
+        "order": 3,
+        "width": 12,
+        "height": 3,
+        "name": "Alerta explicado pela IA",
+        "label": "Orientação / status da IA generativa",
+        "format": "{{msg.payload.alerta || msg.payload.mensagem || msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 2150,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "27700951e6c0563e",
+        "type": "debug",
+        "z": "267a804e8fd0c894",
+        "name": "Resposta da API IA generativa",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2150,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "c5b5d6afb0ad77ee",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Exibir classificação ML",
+        "func": "const p = msg.payload || {}; const c = p.dados && p.dados.classificacao ? p.dados.classificacao : (msg.classificacao || 'INDEFINIDO'); msg.payload = 'Risco identificado pelo ML: ' + c; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1820,
+        "y": 460,
+        "wires": [
+            [
+                "ae0aa01db240c9cb"
+            ]
+        ]
+    },
+    {
+        "id": "ae0aa01db240c9cb",
+        "type": "ui_text",
+        "z": "267a804e8fd0c894",
+        "group": "ac_group_risk",
+        "order": 1,
+        "width": 12,
+        "height": 1,
+        "name": "Classificação de risco",
+        "label": "Classificação do Machine Learning",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 18,
+        "color": "#000000",
+        "x": 2140,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "f553cd2a7c917010",
+        "type": "debug",
+        "z": "267a804e8fd0c894",
+        "name": "Resposta do modelo ML",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1010,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "b7ad3d5810e29407",
+        "type": "inject",
+        "z": "267a804e8fd0c894",
+        "name": "Atualizar histórico a cada 10 s",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 620,
+        "wires": [
+            [
+                "39a62b5c08d90aee"
+            ]
+        ]
+    },
+    {
+        "id": "39a62b5c08d90aee",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Consultar últimas 20 medições",
+        "func": "msg.topic = 'SELECT ponto_monitoramento, nivel_agua_cm, chuva_mm, elevacao_cm_h, data_hora FROM leituras_enchente ORDER BY data_hora DESC LIMIT 20'; return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 620,
+        "wires": [
+            [
+                "ac9779243abb676a"
+            ]
+        ]
+    },
+    {
+        "id": "ac9779243abb676a",
+        "type": "mysql",
+        "z": "267a804e8fd0c894",
+        "mydb": "ac_mysql_cfg",
+        "name": "Ler histórico",
+        "x": 730,
+        "y": 620,
+        "wires": [
+            [
+                "342a63d9c071c9a9"
+            ]
+        ]
+    },
+    {
+        "id": "342a63d9c071c9a9",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Formatar histórico",
+        "func": "msg.payload = (Array.isArray(msg.payload) ? msg.payload : []).map(r => ({ponto:r.ponto_monitoramento, nivel_cm:r.nivel_agua_cm, chuva_mm:r.chuva_mm, elevacao_cm_h:r.elevacao_cm_h, data_hora:r.data_hora})); return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 960,
+        "y": 620,
+        "wires": [
+            [
+                "37a51266e3852d33"
+            ]
+        ]
+    },
+    {
+        "id": "37a51266e3852d33",
+        "type": "ui_table",
+        "z": "267a804e8fd0c894",
+        "group": "ac_group_history",
+        "name": "Últimas medições",
+        "order": 1,
+        "width": 12,
+        "height": 8,
+        "columns": [
+            {
+                "field": "ponto",
+                "title": "Ponto",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "nivel_cm",
+                "title": "Nível (cm)",
+                "width": "",
+                "align": "right",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "chuva_mm",
+                "title": "Chuva (mm)",
+                "width": "",
+                "align": "right",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "elevacao_cm_h",
+                "title": "Elevação (cm/h)",
+                "width": "",
+                "align": "right",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "data_hora",
+                "title": "Data/hora",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 1190,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "b59e2aa49ee6464a",
+        "type": "comment",
+        "z": "267a804e8fd0c894",
+        "name": "MQTT HiveMQ | ML :8000/predict | IA :8001/gerar-alerta",
+        "info": "Pré-requisitos: Node-RED e APIs Python devem conseguir alcançar os endereços configurados. API ML: http://127.0.0.1:8000/predict. API generativa: http://127.0.0.1:8001/gerar-alerta. A API generativa não é criada por este fluxo; ela deve estar em execução separadamente. Se Node-RED estiver em container, 127.0.0.1 aponta para o próprio container: use o endereço do host (por exemplo host.docker.internal, quando suportado). Banco: alertacidadao; tabela: leituras_enchente. Não armazene chaves de API no flow.",
+        "x": 310,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "1428c6f687139a3f",
+        "type": "catch",
+        "z": "267a804e8fd0c894",
+        "name": "Capturar erro da API ML",
+        "scope": [
+            "10f3bac79c472bb1"
+        ],
+        "uncaught": false,
+        "x": 1430,
+        "y": 540,
+        "wires": [
+            [
+                "d8fbd68fc24755c2"
+            ]
+        ]
+    },
+    {
+        "id": "d8fbd68fc24755c2",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Informar indisponibilidade do ML",
+        "func": "const detalhe = (msg.error && msg.error.message) ? msg.error.message : \"Falha de comunicação com a API de Machine Learning.\";\nmsg.payload = \"Não foi possível classificar o risco: a API de Machine Learning está indisponível. Verifique se o serviço está ativo em http://127.0.0.1:8000. Detalhe: \" + detalhe;\nmsg.topic = \"Erro na classificação ML\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1680,
+        "y": 540,
+        "wires": [
+            [
+                "ae0aa01db240c9cb",
+                "f553cd2a7c917010"
+            ]
+        ]
+    },
+    {
+        "id": "c8fa0b71d5853673",
+        "type": "catch",
+        "z": "267a804e8fd0c894",
+        "name": "Capturar erro da API generativa",
+        "scope": [
+            "703d70ce0784a6e2"
+        ],
+        "uncaught": false,
+        "x": 2100,
+        "y": 540,
+        "wires": [
+            [
+                "c0b96320720ecc0f"
+            ]
+        ]
+    },
+    {
+        "id": "c0b96320720ecc0f",
+        "type": "function",
+        "z": "267a804e8fd0c894",
+        "name": "Exibir contingência se a IA estiver indisponível",
+        "func": "const detalhe = (msg.error && msg.error.message) ? msg.error.message : \"Falha de comunicação com a API generativa.\";\nconst classificacao = String(msg.classificacao || \"INDEFINIDO\").toUpperCase();\nmsg.payload = {\n    alerta: \"Classificação do Machine Learning: \" + classificacao + \". A explicação por IA generativa está indisponível neste momento e esta mensagem não foi gerada por um modelo de linguagem. Acompanhe os canais oficiais da Defesa Civil e siga as orientações das autoridades locais. Detalhe técnico: \" + detalhe\n};\nmsg.topic = \"Contingência da IA generativa\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2380,
+        "y": 540,
+        "wires": [
+            [
+                "4cdc426fb0f5b1b6",
+                "cd27d143d64c1de3"
+            ]
+        ]
+    },
+    {
+        "id": "cd27d143d64c1de3",
+        "type": "debug",
+        "z": "267a804e8fd0c894",
+        "name": "Detalhe do erro da API generativa",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2670,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "854e5b8bd2eab5f4",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-mysql": "3.0.0",
+            "node-red-dashboard": "3.6.6",
+            "node-red-node-ui-table": "0.4.5"
+        }
     }
 ]
