@@ -1,0 +1,5 @@
+Aluno: Lucas Rafael Solimene / RM: 565194 / Turma: 2TDSPF
+Aluno: Samyr Couto Oliveira / RM: 565562 / Turma: 2TDSPF
+Aluno: Henrique Teixeira Cesar / RM: 563088 / Turma: 2TDSPF
+
+Link GitHub: https://github.com/Group-GS/GS-IoT
